@@ -1,0 +1,5 @@
+{"id": "1", "prediction": "FAIL\n\nThe passage does not provide information about the publication dates of First for Women. It only mentions that Arthur's Magazine was published from 1844 to 1846, but it does not provide any information about First for Women's publication date.", "ground_truth": "FAIL", "finish_reason": "stop"}
+{"id": "2", "prediction": "PASS", "ground_truth": "PASS", "finish_reason": "stop"}
+{"id": "3", "prediction": "PASS", "ground_truth": "PASS", "finish_reason": "stop"}
+{"id": "4", "prediction": "PASS", "ground_truth": "PASS", "finish_reason": "stop"}
+{"id": "5", "prediction": "FAIL", "ground_truth": "FAIL", "finish_reason": "stop"}

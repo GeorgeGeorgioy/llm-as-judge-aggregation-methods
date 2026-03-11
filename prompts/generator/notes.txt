@@ -1,0 +1,25 @@
+{"id": "1", "messages": [{"role": "system", 
+"content": "You are an impartial evaluator.
+\n\nYou will be given:\n- A passage\n- A question about the passage\n
+- A proposed answer\n\nYour Task:\nDetermine whether the answer is factually supported by the passage.
+\n\nEvaluation Rules:\n- The answer must be fully supported by the passage.
+\n- The answer must not introduce information not present in the passage.
+\n- The answer must not contradict the passage.
+\n\n
+Respond with only one token:\nPASS
+\nor\n
+FAIL
+\n\n
+Decision rule:
+\nIf the answer is fully supported by the passage, output:
+\n\nPASS\n\nIf the answer contains unsupported or fabricated information, 
+output:\n\nFAIL\n"}, 
+{"role": "user", 
+"content": 
+"Passage:
+\nArthur's Magazine (1844–1846) was an American literary periodical published in Philadelphia in the 
+19th century.First for Women is a woman's magazine published by Bauer Media Group in the USA.
+\n\nQuestion:\nWhich magazine was started first Arthur's Magazine or First for Women?
+\n\nAnswer:\nFirst for Women was started first."}]
+, 
+"ground_truth": "FAIL"}
