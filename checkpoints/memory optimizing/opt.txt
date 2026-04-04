@@ -1,0 +1,23 @@
+----------------- Options ---------------
+       aggregation_method: oneshot                       	[default: None]
+          checkpoints_dir: ./checkpoints                 
+             dataset_name: helueval                      	[default: None]
+                    dtype: bfloat16                      
+          experiment_name: memory optimizing             
+                      gpu: 0                             
+   gpu_memory_utilization: 0.45                          
+                     host: 0.0.0.0                       
+            max_model_len: 2048                          
+               max_tokens: 128                           
+                     mode: generator                     
+               model_name: LLAMA_8                       	[default: None]
+                 num_runs: 3                             
+                     port: 18017                         
+               promptroot: /work3/s233559/Thesis/prompts/judge/from_llama8_judge_helueval_v1.jsonl	[default: None]
+              results_dir: /work3/s233559/Thesis/results 	[default: ./results/]
+                     role: judge                         	[default: None]
+             start_server: False                         
+              temperature: 0.0                           
+     tensor_parallel_size: 1                             
+               test_limit: 2000                          
+----------------- End -------------------

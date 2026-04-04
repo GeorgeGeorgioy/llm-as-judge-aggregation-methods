@@ -13,6 +13,9 @@ data/
 datasets/
 *.csv
 *.json
+# except templates
+!data/templates/
+!data/templates/**
 
 install.sh
 

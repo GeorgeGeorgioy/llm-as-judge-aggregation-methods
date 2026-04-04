@@ -49,8 +49,9 @@ class VLLMServerManager:
 
         if self.gpu is not None:
             env["CUDA_VISIBLE_DEVICES"] = str(self.gpu)
-            env["VLLM_LOGGING_LEVEL"] = "DEBUG"
-            env["VLLM_LOG_STATS_INTERVAL"] = "1"
+
+        env["VLLM_LOGGING_LEVEL"] = "DEBUG"
+        env["VLLM_LOG_STATS_INTERVAL"] = "1"
 
     # prepare log file
 
@@ -75,6 +76,8 @@ class VLLMServerManager:
         "--model", self.model_name,
         "--gpu-memory-utilization", str(self.gpu_memory_utilization),
         "--max-model-len", str(self.opt.max_model_len),
+        "--tensor-parallel-size", str(self.opt.tensor_parallel_size),
+        "--dtype", self.opt.dtype,
 
 
     ]
