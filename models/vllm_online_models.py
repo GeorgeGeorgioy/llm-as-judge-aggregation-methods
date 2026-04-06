@@ -22,16 +22,26 @@ class VLLMOnlineModel:
         out_dir = os.path.join(self.opt.results_dir, self.opt.role, self.alias)
         os.makedirs(out_dir, exist_ok=True)
         prompt_path = self.opt.promptroot
+        print(prompt_path)
 
         if self.opt.role == "judge":
 
             filename = os.path.basename(self.opt.promptroot)
-            generator_name = filename.replace("from_", "").split("_judge")[0]
+            name = filename.replace(".jsonl", "")
+            parts = name.split("_")
+            generator_name = parts[1]
 
             out_filename = (
                 f"{self.opt.role}_{self.alias}_generator_{generator_name}_"
                 f"{self.opt.aggregation_method}_{self.opt.dataset_name}_results.jsonl"
             )
+
+
+            print("role", self.opt.role)
+            print("alias", self.alias)
+            print("generator_name", generator_name)
+            print("opt.aggregation_method", self.opt.aggregation_method)
+            print("self.opt.dataset_name", self.opt.dataset_name)
 
         elif self.opt.role == "generator":
 
@@ -39,6 +49,7 @@ class VLLMOnlineModel:
                 f"{self.opt.role}_{self.alias}_"
                 f"{self.opt.aggregation_method}_{self.opt.dataset_name}_results.jsonl"
             )
+            print(out_filename)
 
         else:
             raise ValueError(f"Unknown role: {self.opt.role}")
@@ -68,9 +79,9 @@ class VLLMOnlineModel:
             record = {
                 "id": ex_id,
                 "prediction": prediction,
-                "ground_truth": item.get("ground_truth"),
-                "generators_answer": item.get("metadata", {}).get("generators_answer"), 
+                "ground_truth": item.get("ground_truth"), 
                 "finish_reason": finish_reason,
+                "metadata": item.get("metadata", {}),
             }
 
         except Exception as e:
@@ -88,6 +99,7 @@ class VLLMOnlineModel:
     
     def run(self)-> str:
         print(f"I am in the {self.alias} model runner")
+        print(self.opt.promptroot)
 
         # url = f"http://{self.opt.host}:{self.opt.port}/v1/chat/completions"
         url = self.end_point()
@@ -110,9 +122,9 @@ class VLLMOnlineModel:
                 item = json.loads(line)
                 ex_id = item.get("id", str(i))
 
-                runs = 1
-                if self.opt.aggregation_method == "multi-run":
-                    runs = self.opt.num_runs
+                runs = self.opt.num_runs
+                #if self.opt.aggregation_method == "MultiRun":
+                    #runs = self.opt.num_runs
 
                 for run_id in range(runs):
 

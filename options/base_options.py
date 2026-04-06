@@ -32,7 +32,7 @@ class BaseOptions:
         parser.add_argument("--port", type=int, default=18017)
         parser.add_argument("--gpu", default="0", help="CUDA_VISIBLE_DEVICES value, e.g. 0 or 1")
         parser.add_argument("--start_server", action="store_true", help="assume server already running")
-        parser.add_argument("--gpu-memory-utilization", type=float, default=0.45, help="vLLM GPU memory utilization when starting server")
+        parser.add_argument("--gpu-memory-utilization", type=float, default=0.6, help="vLLM GPU memory utilization when starting server")
         parser.add_argument("--tensor_parallel_size", type=int, default=1, help="vLLM tensor parallel size when starting server")
 
         # dataset parameters

@@ -101,9 +101,41 @@ def clean_prediction(raw_prediction: Any) -> str:
 
     first_word = text.split()[0].strip().upper()
 
-    allowed = {"PASS", "FAIL", "A", "B", "PROPOSED_ANSWER", "ANSWER"}
+    allowed = {
+    "PASS", "FAIL", "A", "B", "PROPOSED_ANSWER", "ANSWER",
+    "PHOTOGRAPHER",
+    "FILMMAKER",
+    "PHYSICIAN",
+    "COMPOSER",
+    "COMEDIAN",
+    "ARCHITECT",
+    "PERSONAL_TRAINER",
+    "ATTORNEY",
+    "INTERIOR_DESIGNER",
+    "PROFESSOR",
+    "PASTOR",
+    "SOFTWARE_ENGINEER",
+    "PAINTER",
+    "YOGA_TEACHER",
+    "DIETITIAN",
+    "PARALEGAL",
+    "CHIROPRACTOR",
+    "DENTIST",
+    "RAPPER",
+    "TEACHER",
+    "PSYCHOLOGIST",
+    "ACCOUNTANT",
+    "NURSE",
+    "DJ",
+    "MODEL",
+    "JOURNALIST",
+    "POET",
+    "SURGEON"
+}
+    
 
     if first_word in allowed:
+        
         return first_word
 
     return fallback    
@@ -132,15 +164,15 @@ def build_prompt_object(
 
     #---------- delete here ----------
 
-    passage = dataset_row["hard_text"]
-    #question = "What is the occupation of the person described in the passage?"
-    answer = dataset_row["occupation"]
+    passage = dataset_row["passage"]
+    question = dataset_row["question"]
+    answer = dataset_row["answer"]
 
     user_filled = user_template.format(
-        hard_text=passage,
-        #question=question,
-        #answer=answer,
-        proposed_occupation=proposed_answer,
+        passage=passage,
+        question=question,
+        answer=answer,
+        proposed_answer=proposed_answer,
     )
 
     obj = {
@@ -149,10 +181,12 @@ def build_prompt_object(
             {"role": "system", "content": system_template},
             {"role": "user", "content": user_filled},
         ],
+        "ground_truth": dataset_row["label"],
         "metadata": {
-            "gender": dataset_row.get("gender"),
-            "occupation": dataset_row.get("occupation"),
-            "token_length": dataset_row.get("token_length"),
+            "generators_answer": proposed_answer,
+            "prompt_length": dataset_row.get("prompt_length"),
+            "llama_3_1_bucket": dataset_row.get("llama_3_1_bucket"),
+
         }
     }
 
@@ -189,30 +223,36 @@ def build_and_save_jsonl(
 
 if __name__ == "__main__":
 
+
+
+    """
+    Name of output judge prompt folder gen_<model_name>_<aggre.method>_for_<dataset_name>_judge.jsonl
+    Name of input generator results folder generator_<model>_<method>_<dataset_name>_results.jsonl
+    """
+
  ################ -- arena -- ########################################################
     """
-    yaml_path = Path("/work3/s233559/Thesis/data/templates/arena_j.yaml")
+    yaml_path = Path("/work3/s233559/Thesis/data/templates/ArenaPosition_j.yaml")
     dataset_path = Path("/work3/s233559/Thesis/data/dataset/Chatbot_arena_2000_final.csv")
-    generator_output_path = Path("/work3/s233559/Thesis/results/generator/llama8/llama8_generator_oneshot_arena_results.jsonl")
-    output_path = Path("/work3/s233559/Thesis/prompts/judge/from_llama8_judge_arena_v1.jsonl")
+    generator_output_path = Path("/work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_ArenaPosition_results.jsonl")
+    output_path = Path("/work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_ArenaPosition_to_judge.jsonl")
     """
  ############## -- biasandbio -- ########################################################
-    
-    yaml_path = Path("/work3/s233559/Thesis/data/templates/biasandbion_j.yaml")
+    """
+    yaml_path = Path("/work3/s233559/Thesis/data/templates/BiasBio_j.yaml")
     dataset_path = Path("/work3/s233559/Thesis/data/dataset/bias_in_bios_2000_final.csv")
-    generator_output_path = Path("/work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_biasandbio_results.jsonl")
-    output_path = Path("/work3/s233559/Thesis/prompts/judge/from_llama8_judge_biasandbio.jsonl")
-    
+    generator_output_path = Path("/work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_BiasBio_results.jsonl")
+    output_path = Path("/work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_BiasBio_to_judge.jsonl")
+    """
 
     #####################-- helueval --########################################
-    """
-    yaml_path = Path("/work3/s233559/Thesis/data/templates/helueval_j.yaml")
+    
+    yaml_path = Path("/work3/s233559/Thesis/data/templates/HaluEval_j.yaml")
     dataset_path = Path("/work3/s233559/Thesis/data/dataset/hallucination_eval_2000_balanced_clean.csv")
-    generator_output_path = Path("/work3/s233559/Thesis/results/generator/llama8/llama8_generator_oneshot_helueval_results.jsonl")
-
-    output_path = Path("/work3/s233559/Thesis/prompts/judge/from_llama8_judge_helueval_v1.jsonl")
-
-    """
+    generator_output_path = Path("/work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_HaluEval_results.jsonl")
+    output_path = Path("/work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_HaluEval_to_judge.jsonl")
+ 
+    
     
     ########################################################################
     prompt_cfg = load_prompt_yaml(yaml_path)
@@ -251,6 +291,7 @@ if __name__ == "__main__":
         ],
         "ground_truth": dataset_row["label"],
         "metadata": {
+            "generators_answer": proposed_answer,
             "prompt_length": dataset_row.get("prompt_length"),
             "llama_3_1_bucket": dataset_row.get("llama_3_1_bucket"),
 
@@ -261,8 +302,8 @@ if __name__ == "__main__":
 
 
     ===============================================================
-
-        biasandbio
+     
+    biasandbio
 
     passage = dataset_row["hard_text"]
     #question = "What is the occupation of the person described in the passage?"
@@ -281,7 +322,9 @@ if __name__ == "__main__":
             {"role": "system", "content": system_template},
             {"role": "user", "content": user_filled},
         ],
+        "ground_truth": dataset_row["occupation"],
         "metadata": {
+            "generators_answer": proposed_answer,
             "gender": dataset_row.get("gender"),
             "occupation": dataset_row.get("occupation"),
             "token_length": dataset_row.get("token_length"),
@@ -289,7 +332,7 @@ if __name__ == "__main__":
     }
 
     return obj
-
+    
 
     ================================================================
 
@@ -312,6 +355,7 @@ if __name__ == "__main__":
         ],
         "ground_truth": dataset_row["winner"],
         "metadata": {
+            "generators_answer": proposed_answer,
             "model_a": dataset_row.get("model_a"),
             "model_b": dataset_row.get("model_b"),
             "response_a_len": dataset_row.get("response_a_len"),

@@ -1,19 +1,19 @@
 ----------------- Options ---------------
-       aggregation_method: oneshot                       	[default: None]
+       aggregation_method: oneshot                       
           checkpoints_dir: ./checkpoints                 
-             dataset_name: helueval                      	[default: None]
+             dataset_name: None                          
                     dtype: bfloat16                      
           experiment_name: memory optimizing             
                       gpu: 0                             
-   gpu_memory_utilization: 0.45                          
+   gpu_memory_utilization: 0.6                           	[default: 0.8]
                      host: 0.0.0.0                       
             max_model_len: 2048                          
                max_tokens: 128                           
                      mode: generator                     
-               model_name: LLAMA_8                       	[default: None]
-                 num_runs: 3                             
+               model_name: qwen7                         	[default: None]
+                 num_runs: 1                             
                      port: 18017                         
-               promptroot: /work3/s233559/Thesis/prompts/judge/from_llama8_judge_helueval_v1.jsonl	[default: None]
+               promptroot: /work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_HaluEval_to_judge.jsonl	[default: None]
               results_dir: /work3/s233559/Thesis/results 	[default: ./results/]
                      role: judge                         	[default: None]
              start_server: False                         

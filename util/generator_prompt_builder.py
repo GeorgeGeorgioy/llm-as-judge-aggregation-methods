@@ -108,7 +108,7 @@ def build_and_save_jsonl( prompt_cfg: Dict[str, Any], rows: List[Dict[str, str]]
 if __name__ == "__main__":
     yaml_path = Path("/work3/s233559/Thesis/data/templates/arena_g_swaped.yalm")
     csv_path = Path("/work3/s233559/Thesis/data/dataset/Chatbot_arena_2000_final.csv")
-    output_path = Path("/work3/s233559/Thesis/prompts/generator/generator_Chatbot_arena_swapped_v1.jsonl")
+    output_path = Path("/work3/s233559/Thesis/prompts/generator/generator_ArenaPosition.jsonl")
 
     prompt_cfg = load_prompt_yaml(yaml_path)
     rows = load_csv_rows(csv_path)
