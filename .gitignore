@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+checkpoints/
+results/
 # Jupyter
 .ipynb_checkpoints/
 
@@ -16,6 +18,8 @@ datasets/
 # except templates
 !data/templates/
 !data/templates/**
+
+
 
 install.sh
 
