@@ -143,7 +143,168 @@ def clean_prediction(raw_prediction: Any) -> str:
 
 #### -- END OF HEALPER FUNCTIONS -- ####
 
-def build_prompt_object(
+
+
+def build_prompt_object(dataset_name, prompt_cfg, dataset_row, generator_row):
+    if dataset_name == "HaluEval":
+        return build_prompt_halueval(prompt_cfg, dataset_row, generator_row)
+    elif dataset_name == "BiasBio":
+        return build_prompt_biasbio(prompt_cfg, dataset_row, generator_row)
+    elif dataset_name == "Arena":
+        return build_prompt_arena(prompt_cfg, dataset_row, generator_row)
+    elif dataset_name == "ArenaPosition":
+        return build_prompt_arenaposition(prompt_cfg, dataset_row, generator_row)    
+    else:
+        raise ValueError(f"Unknown dataset: {dataset_name}")
+
+def build_prompt_biasbio(
+    prompt_cfg: Dict[str, Any],
+    dataset_row: Dict[str, str],
+    generator_row: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Build one judge prompt object."""
+
+    system_template = prompt_cfg["messages"][0]["content"]
+    user_template = prompt_cfg["messages"][1]["content"]
+
+    sample_id = str(dataset_row["id"])
+
+    if "prediction" not in generator_row:
+        raise ValueError(f"Missing 'prediction' in generator output for id={sample_id}")
+
+    #proposed_answer = generator_row["prediction"]
+    raw_prediction = generator_row["prediction"]
+    proposed_answer = clean_prediction(raw_prediction)
+
+    user_filled = user_template.format(
+        hard_text=dataset_row["hard_text"],
+        proposed_occupation=proposed_answer,
+    )
+
+    return {
+        "id": str(dataset_row["id"]),
+        "messages": [
+            {"role": "system", "content": system_template},
+            {"role": "user", "content": user_filled},
+        ],
+        "ground_truth": dataset_row["occupation"],
+        "metadata": {
+            "generators_answer": proposed_answer,
+            "gender": dataset_row.get("gender"),
+            "occupation": dataset_row.get("occupation"),
+            "token_length": dataset_row.get("token_length"),
+        },
+    }
+
+def  build_prompt_arenaposition(
+    prompt_cfg: Dict[str, Any],
+    dataset_row: Dict[str, str],
+    generator_row: Dict[str, Any],
+) -> Dict[str, Any]:
+    """ArenaPosition.csv is the same as Arena.csv 
+       I swap only the responses
+    """
+
+    system_template = prompt_cfg["messages"][0]["content"]
+    user_template = prompt_cfg["messages"][1]["content"]
+
+    sample_id = str(dataset_row["id"])
+
+    if "prediction" not in generator_row:
+        raise ValueError(f"Missing 'prediction' in generator output for id={sample_id}")
+
+    #proposed_answer = generator_row["prediction"]
+    raw_prediction = generator_row["prediction"]
+    proposed_answer = clean_prediction(raw_prediction)
+    """ArenaPosition.csv is the same as Arena.csv """
+
+    user_filled = user_template.format(
+        prompt=dataset_row["prompt"],
+        response_a=dataset_row["response_b"],
+        response_b=dataset_row["response_a"],
+        proposed_answer=proposed_answer,
+    )
+
+    return {
+        "id": str(dataset_row["id"]),
+        "messages": [
+            {"role": "system", "content": system_template},
+            {"role": "user", "content": user_filled},
+        ],
+        "ground_truth": dataset_row["winner"],
+        "metadata": {
+            "generators_answer": proposed_answer,
+            "model_a": dataset_row.get("model_a"),
+            "model_b": dataset_row.get("model_b"),
+            "response_a_len": dataset_row.get("response_a_len"),
+            "response_b_len": dataset_row.get("response_b_len"),
+            "winner_model": dataset_row.get("winner_model"),
+            "longer": dataset_row.get("longer"),
+            "prompt_len": dataset_row.get("prompt_len"),
+            "pair": dataset_row.get("pair"),
+            "winner_A": dataset_row.get("winner_A"),
+            "length_diff": dataset_row.get("length_diff"),
+        },
+    }
+
+
+
+
+
+def  build_prompt_arena(
+    prompt_cfg: Dict[str, Any],
+    dataset_row: Dict[str, str],
+    generator_row: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Build one judge prompt object."""
+
+    system_template = prompt_cfg["messages"][0]["content"]
+    user_template = prompt_cfg["messages"][1]["content"]
+
+    sample_id = str(dataset_row["id"])
+
+    if "prediction" not in generator_row:
+        raise ValueError(f"Missing 'prediction' in generator output for id={sample_id}")
+
+    #proposed_answer = generator_row["prediction"]
+    raw_prediction = generator_row["prediction"]
+    proposed_answer = clean_prediction(raw_prediction)
+
+    user_filled = user_template.format(
+        prompt=dataset_row["prompt"],
+        response_a=dataset_row["response_a"],
+        response_b=dataset_row["response_b"],
+        proposed_answer=proposed_answer,
+    )
+
+    return {
+        "id": str(dataset_row["id"]),
+        "messages": [
+            {"role": "system", "content": system_template},
+            {"role": "user", "content": user_filled},
+        ],
+        "ground_truth": dataset_row["winner"],
+        "metadata": {
+            "generators_answer": proposed_answer,
+            "model_a": dataset_row.get("model_a"),
+            "model_b": dataset_row.get("model_b"),
+            "response_a_len": dataset_row.get("response_a_len"),
+            "response_b_len": dataset_row.get("response_b_len"),
+            "winner_model": dataset_row.get("winner_model"),
+            "longer": dataset_row.get("longer"),
+            "prompt_len": dataset_row.get("prompt_len"),
+            "pair": dataset_row.get("pair"),
+            "winner_A": dataset_row.get("winner_A"),
+            "length_diff": dataset_row.get("length_diff"),
+        },
+    }
+
+
+
+
+
+
+def build_prompt_halueval(
     prompt_cfg: Dict[str, Any],
     dataset_row: Dict[str, str],
     generator_row: Dict[str, Any],
@@ -164,19 +325,15 @@ def build_prompt_object(
 
     #---------- delete here ----------
 
-    passage = dataset_row["passage"]
-    question = dataset_row["question"]
-    answer = dataset_row["answer"]
-
     user_filled = user_template.format(
-        passage=passage,
-        question=question,
-        answer=answer,
+        passage=dataset_row["passage"],
+        question=dataset_row["question"],
+        answer=dataset_row["answer"],
         proposed_answer=proposed_answer,
     )
 
-    obj = {
-        "id": sample_id,
+    return {
+        "id": str(dataset_row["id"]),
         "messages": [
             {"role": "system", "content": system_template},
             {"role": "user", "content": user_filled},
@@ -186,14 +343,12 @@ def build_prompt_object(
             "generators_answer": proposed_answer,
             "prompt_length": dataset_row.get("prompt_length"),
             "llama_3_1_bucket": dataset_row.get("llama_3_1_bucket"),
-
-        }
+        },
     }
-
-    return obj
 
 
 def build_and_save_jsonl(
+    dataset_name: str,
     prompt_cfg: Dict[str, Any],
     dataset_rows: List[Dict[str, str]],
     generator_rows: List[Dict[str, Any]],
@@ -213,11 +368,15 @@ def build_and_save_jsonl(
             sample_id = str(dataset_row["id"])
 
             if sample_id not in generator_by_id:
-                raise ValueError(f"Missing generator output for id={sample_id}")
+                print(f"[WARNING] Missing generator output for id={sample_id} - skipping")
+                #raise ValueError(f"Missing generator output for id={sample_id}")
+                continue
+                
+                
 
             generator_row = generator_by_id[sample_id]
 
-            obj = build_prompt_object(prompt_cfg, dataset_row, generator_row)
+            obj = build_prompt_object(dataset_name=dataset_name, prompt_cfg=prompt_cfg, dataset_row=dataset_row, generator_row=generator_row,)
             f_out.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
 
@@ -230,43 +389,32 @@ if __name__ == "__main__":
     Name of input generator results folder generator_<model>_<method>_<dataset_name>_results.jsonl
     """
 
- ################ -- arena -- ########################################################
-    """
-    yaml_path = Path("/work3/s233559/Thesis/data/templates/ArenaPosition_j.yaml")
-    dataset_path = Path("/work3/s233559/Thesis/data/dataset/Chatbot_arena_2000_final.csv")
-    generator_output_path = Path("/work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_ArenaPosition_results.jsonl")
-    output_path = Path("/work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_ArenaPosition_to_judge.jsonl")
-    """
- ############## -- biasandbio -- ########################################################
-    """
-    yaml_path = Path("/work3/s233559/Thesis/data/templates/BiasBio_j.yaml")
-    dataset_path = Path("/work3/s233559/Thesis/data/dataset/bias_in_bios_2000_final.csv")
-    generator_output_path = Path("/work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_BiasBio_results.jsonl")
-    output_path = Path("/work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_BiasBio_to_judge.jsonl")
-    """
+    config_path = Path("judge_jobs.yaml")
 
-    #####################-- helueval --########################################
-    
-    yaml_path = Path("/work3/s233559/Thesis/data/templates/HaluEval_j.yaml")
-    dataset_path = Path("/work3/s233559/Thesis/data/dataset/hallucination_eval_2000_balanced_clean.csv")
-    generator_output_path = Path("/work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_HaluEval_results.jsonl")
-    output_path = Path("/work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_HaluEval_to_judge.jsonl")
- 
-    
-    
-    ########################################################################
-    prompt_cfg = load_prompt_yaml(yaml_path)
-    dataset_rows = load_csv_rows(dataset_path)
-    generator_rows = load_jsonl_rows(generator_output_path)
+    config = yaml.safe_load(config_path.read_text())
 
-    build_and_save_jsonl(prompt_cfg, dataset_rows, generator_rows, output_path)
+    for job in config["jobs"]:
+        dataset_name = job["dataset_name"]
+        prompt_cfg = load_prompt_yaml(Path(job["yaml_path"]))
+        dataset_rows = load_csv_rows(Path(job["dataset_path"]))
+        generator_rows = load_jsonl_rows(Path(job["generator_output_path"]))
 
-    print("Loaded YAML keys:", list(prompt_cfg.keys()))
-    print("Num messages:", len(prompt_cfg["messages"]))
-    print("Dataset columns:", dataset_rows[0].keys() if dataset_rows else "NO ROWS")
-    print("Num dataset rows:", len(dataset_rows))
-    print("Num generator rows:", len(generator_rows))
-    print("Saved judge prompts to:", output_path)
+        build_and_save_jsonl(
+            dataset_name=dataset_name,
+            prompt_cfg=prompt_cfg,
+            dataset_rows=dataset_rows,
+            generator_rows=generator_rows,
+            out_path=Path(job["output_path"]),
+        )
+
+        print("Loaded YAML keys:", list(prompt_cfg.keys()))
+        print("Num messages:", len(prompt_cfg["messages"]))
+        print("Dataset columns:", dataset_rows[0].keys() if dataset_rows else "NO ROWS")
+        print("Num dataset rows:", len(dataset_rows))
+        print("Num generator rows:", len(generator_rows))
+        print("Saved judge prompts to:", Path(job["output_path"]))
+
+
 
 
     """

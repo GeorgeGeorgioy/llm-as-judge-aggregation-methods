@@ -1,9 +1,9 @@
+checkpoints/
+results/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-checkpoints/
-results/
 # Jupyter
 .ipynb_checkpoints/
 

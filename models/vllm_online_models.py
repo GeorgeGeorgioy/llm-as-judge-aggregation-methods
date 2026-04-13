@@ -2,6 +2,7 @@
 import os
 import json
 import requests
+import random
 
 class VLLMOnlineModel:
     def __init__(self, opt, model_id, alias):
@@ -18,7 +19,7 @@ class VLLMOnlineModel:
 
 
     def pathes_diffinder(self):
-
+        print("opt.aggregation_method", self.opt.aggregation_method)
         out_dir = os.path.join(self.opt.results_dir, self.opt.role, self.alias)
         os.makedirs(out_dir, exist_ok=True)
         prompt_path = self.opt.promptroot
@@ -66,6 +67,8 @@ class VLLMOnlineModel:
             "messages": item["messages"],
             "max_tokens": self.opt.max_tokens,
             "temperature": self.opt.temperature,
+            "top_p": 0.9,
+            "seed": random.randint(0, 100000)
         }
 
         try:
@@ -108,8 +111,10 @@ class VLLMOnlineModel:
         # os.makedirs(out_dir, exist_ok=True)
         # out_filename = f"{self.alias}_{self.opt.role}_{self.opt.aggregation_method}_{self.opt.dataset_name}_results.jsonl"
         # out_path = os.path.join(out_dir, out_filename)
+        print("opt.aggregation_method", self.opt.aggregation_method)
 
         out_path, prompt_path = self.pathes_diffinder()
+        print("opt.aggregation_method", self.opt.aggregation_method)
 
         with open(prompt_path, "r", encoding="utf-8") as f_in, \
             open(out_path, "w", encoding="utf-8") as f_out:

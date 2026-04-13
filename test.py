@@ -31,8 +31,8 @@ def run_oneshot_for_all_files(opt, model_id, alias, folder_path):
 
     print(f"[INFO] Found {len(files)} files in {folder_path}")
 
-    opt.num_runs = 1
-    opt.aggregation_method = "oneshot"
+    #opt.num_runs = 1
+    #opt.aggregation_method = "oneshot"
 
     for file_path in files:
 
@@ -53,6 +53,7 @@ def run_oneshot_for_all_files(opt, model_id, alias, folder_path):
 def extract_dataset_name(promptroot: str, role: str) -> str:
     filename = Path(promptroot).stem
     parts = filename.split("_")
+    print(opt.role)
 
     if role == "generator":
         # π.χ. generator_BiasBio → BiasBio
@@ -64,6 +65,7 @@ def extract_dataset_name(promptroot: str, role: str) -> str:
         # ex. generator_llama8_oneshot_Arena_judge
         # dataset should be always before  "judge"
         if parts[-1] == "judge":
+            print(parts[-3])
             return parts[-3]
         else:
             raise ValueError(f"Unexpected judge filename format: {filename}")
@@ -94,9 +96,44 @@ if __name__ == "__main__":
       if cmd.startswith("oneshot_all"):
         """
         Type oneshot_all <folder_path> to run oneshot on all .jsonl files in a folder
+
+        
         """
+        """
+        they dont belong here
+        """
+        opt.num_runs= 3
+        opt.aggregation_method= "multirun"
+        
+        
         folder_path = cmd.split(maxsplit=1)[1] if len(cmd.split(maxsplit=1)) > 1 else opt.promptroot
         run_oneshot_for_all_files(opt, model_id, alias, folder_path)
+
+
+
+      elif cmd.startswith("change_role"):
+        """
+        Type:
+          change_role <generator|judge>
+        Example:
+          change_role judge
+        """
+        parts = cmd.strip().split()
+
+        if len(parts) < 2:
+          print("[ERROR] Usage: change_role <generator|judge>")
+          continue
+
+        new_role = parts[1].lower()
+
+        if new_role not in ["generator", "judge"]:
+          print("[ERROR] Role must be either 'generator' or 'judge'")
+          continue
+
+        opt.role = new_role
+        print(f"[INFO] Role changed to: {opt.role}")
+
+
 
       elif cmd.startswith("oneshot"):
         """
@@ -108,7 +145,7 @@ if __name__ == "__main__":
         new_dataroot = cmd.split(maxsplit=1)[1] if len(cmd.split(maxsplit=1)) > 1 else opt.promptroot
         opt.promptroot = new_dataroot
         opt.dataset_name = extract_dataset_name(opt.promptroot, opt.role)
-        print(f"[INFO] Using dataset: {opt.dshutdownataset_name}")
+        print(f"[INFO] Using dataset: {opt.dataset_name}")
 
 
 

@@ -1,0 +1,73 @@
+jobs:
+  - dataset_name: HaluEval
+    yaml_path: /work3/s233559/Thesis/data/templates/HaluEval_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/HaluEval.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_HaluEval_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_HaluEval_to_judge.jsonl
+
+  - dataset_name: HaluEval
+    yaml_path: /work3/s233559/Thesis/data/templates/HaluEval_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/HaluEval.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_HaluEval_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_HaluEval_to_judge.jsonl
+
+  - dataset_name: HaluEval
+    yaml_path: /work3/s233559/Thesis/data/templates/HaluEval_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/HaluEval.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/mistral7/generator_mistral7_oneshot_HaluEval_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_mistral7_oneshot_HaluEval_to_judge.jsonl
+
+  - dataset_name: BiasBio
+    yaml_path: /work3/s233559/Thesis/data/templates/BiasBio_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/BiasBio.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_BiasBio_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_BiasBio_to_judge.jsonl
+
+  - dataset_name: BiasBio
+    yaml_path: /work3/s233559/Thesis/data/templates/BiasBio_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/BiasBio.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_BiasBio_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_BiasBio_to_judge.jsonl
+
+  - dataset_name: BiasBio
+    yaml_path: /work3/s233559/Thesis/data/templates/BiasBio_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/BiasBio.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/mistral7/generator_mistral7_oneshot_BiasBio_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_mistral7_oneshot_BiasBio_to_judge.jsonl
+
+  - dataset_name: Arena
+    yaml_path: /work3/s233559/Thesis/data/templates/Arena_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_Arena_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_Arena_to_judge.jsonl
+
+  - dataset_name: Arena
+    yaml_path: /work3/s233559/Thesis/data/templates/Arena_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_Arena_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_Arena_to_judge.jsonl
+
+  - dataset_name: Arena
+    yaml_path: /work3/s233559/Thesis/data/templates/Arena_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/mistral7/generator_mistral7_oneshot_Arena_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_mistral7_oneshot_Arena_to_judge.jsonl
+   
+  - dataset_name: ArenaPosition
+    yaml_path: /work3/s233559/Thesis/data/templates/ArenaPosition_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/qwen7/generator_qwen7_oneshot_ArenaPosition_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_ArenaPosition_to_judge.jsonl 
+
+  - dataset_name: ArenaPosition
+    yaml_path: /work3/s233559/Thesis/data/templates/ArenaPosition_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/llama8/generator_llama8_oneshot_ArenaPosition_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_ArenaPosition_to_judge.jsonl
+
+  - dataset_name: ArenaPosition
+    yaml_path: /work3/s233559/Thesis/data/templates/ArenaPosition_j.yaml
+    dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+    generator_output_path: /work3/s233559/Thesis/results/generator/mistral7/generator_mistral7_oneshot_ArenaPosition_results.jsonl
+    output_path: /work3/s233559/Thesis/prompts/judge/generator_mistral7_oneshot_ArenaPosition_to_judge.jsonl
+

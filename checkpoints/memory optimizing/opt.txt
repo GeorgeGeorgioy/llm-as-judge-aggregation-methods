@@ -1,23 +1,23 @@
 ----------------- Options ---------------
-       aggregation_method: oneshot                       
+       aggregation_method: multirun                      
           checkpoints_dir: ./checkpoints                 
              dataset_name: None                          
                     dtype: bfloat16                      
           experiment_name: memory optimizing             
                       gpu: 0                             
-   gpu_memory_utilization: 0.6                           	[default: 0.8]
+   gpu_memory_utilization: 0.6                           
                      host: 0.0.0.0                       
             max_model_len: 2048                          
                max_tokens: 128                           
                      mode: generator                     
-               model_name: qwen7                         	[default: None]
-                 num_runs: 1                             
+               model_name: mistral7                      	[default: None]
+                 num_runs: 3                             
                      port: 18017                         
-               promptroot: /work3/s233559/Thesis/prompts/judge/generator_qwen7_oneshot_HaluEval_to_judge.jsonl	[default: None]
+               promptroot: /work3/s233559/Thesis/prompts/judge/generator_llama8_oneshot_Arena_to_judge.jsonl	[default: None]
               results_dir: /work3/s233559/Thesis/results 	[default: ./results/]
                      role: judge                         	[default: None]
              start_server: False                         
-              temperature: 0.0                           
+              temperature: 0.3                           
      tensor_parallel_size: 1                             
                test_limit: 2000                          
 ----------------- End -------------------
