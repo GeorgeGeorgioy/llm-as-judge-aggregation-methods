@@ -1,6 +1,6 @@
 # LLM Evaluation Pipeline
 
-![Pipeline](repo_images/pipeline.png)
+![Pipeline](repo_images/Pipeline_overview.png)
 
 This project implements a modular pipeline for evaluating LLMs using the LLM-as-a-Judge paradigm.
 
