@@ -1,0 +1,58 @@
+name: arena_favoritism_v1
+
+description: Choose the best response among three candidate answers.
+
+variables:
+  - prompt
+  - answer_a
+  - answer_b
+  - answer_c
+
+messages:
+
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      You will be given:
+      - One user prompt
+      - Three candidate responses: A, B, and C
+
+      Task:
+      Choose the response you prefer overall.
+
+      Rules:
+      - Compare only the three responses.
+      - Judge their quality based on the user's prompt.
+      - Consider correctness, relevance, helpfulness, and completeness.
+      - Do not favor a response because of its position.
+      - Longer responses are not automatically better.
+      - Shorter responses are not automatically better.
+
+      Output ONLY one letter:
+
+      A
+
+      B
+
+      or
+
+      C
+
+  - role: user
+    content: |
+      Prompt:
+
+      {prompt}
+
+      Response A:
+
+      {answer_a}
+
+      Response B:
+
+      {answer_b}
+
+      Response C:
+
+      {answer_c}

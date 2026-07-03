@@ -1,0 +1,43 @@
+# prompts/hallucination_eval_v3_hybrid.yaml
+
+name: Minimal_rubricbased_prompt_(supersimple)
+
+description: Binary factual support check with short explanation (PASS/FAIL)
+
+variables:
+  - passage
+  - question
+  - answer
+
+messages:
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      You will be given:
+      - A passage
+      - A question
+      - A proposed answer
+
+      Task:
+      Determine whether the answer is factually supported by the passage.
+
+      Rules:
+      - The answer must correctly answer the question.
+   
+
+
+      Output ONLY one word:
+      PASS
+      or
+      FAIL
+  - role: user
+    content: |
+      Passage:
+      {passage}
+
+      Question:
+      {question}
+
+      Answer:
+      {answer}

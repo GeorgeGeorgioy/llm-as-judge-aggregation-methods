@@ -25,14 +25,16 @@ class BaseOptions:
         # model parameters
         parser.add_argument("--model_name", type=str, required=True, help="specify which model to use.[qwen7 |mistral7 | llama8] ")
         parser.add_argument("--dtype", type=str, default="bfloat16", help="The data type for the model weights and activations..| [half| bfloat16 | float32]")
-        parser.add_argument("--max-model-len", type=int, default=2048, help="maximum length of the model, prompt tokens + generated tokens")
+        parser.add_argument("--max-model-len", type=int, default=2800, help="maximum length of the model, prompt tokens + generated tokens")
 
         # connection parameters
         parser.add_argument("--host", default="0.0.0.0")
         parser.add_argument("--port", type=int, default=18017)
         parser.add_argument("--gpu", default="0", help="CUDA_VISIBLE_DEVICES value, e.g. 0 or 1")
+
+    
         parser.add_argument("--start_server", action="store_true", help="assume server already running")
-        parser.add_argument("--gpu-memory-utilization", type=float, default=0.6, help="vLLM GPU memory utilization when starting server")
+        parser.add_argument("--gpu-memory-utilization", type=float, default=0.5, help="vLLM GPU memory utilization when starting server")
         parser.add_argument("--tensor_parallel_size", type=int, default=1, help="vLLM tensor parallel size when starting server")
 
         # dataset parameters

@@ -1,0 +1,154 @@
+Observation (Initial Prompt Performance on Arena Dataset)
+
+========================1st template ============================
+
+For the Chatbot Arena setup, after applying slight normalization to the responses—removing extra spaces and keeping only the first letter when it is “A” or “B” (provided it appears as a standalone token)—compliance with the response format is quite high. This shows that, with minimal effort, most models can be aligned with the expected output format, with Mistral consistently producing properly formatted answers.
+However, the overall results are quite poor. The accuracy is close to 0.5 across all models, indicating near-random performance, while the F1 score is often even lower. This suggests that further improvements are needed, both in terms of aggregation methods and prompt design, to achieve better performance.
+
+
+llama8 | acc: 0.5550 | f1: 0.4879 | recall: 0.5470
+mistral7 | acc: 0.5100 | f1: 0.3405 | recall: 0.4986
+qwen7 | acc: 0.5665 | f1: 0.5431 | recall: 0.5616
+
+
+The positional bias is unreasonably high.
+
+
+
+generator_model	prediction	prediction_rate	ground_truth_rate	bias_difference
+0	llama8	  A	0.850500	0.511419	0.339081
+1	llama8	  B	0.149500	0.488581	-0.339081
+2	mistral   A	0.995998	0.511419	0.484579
+3	mistral7  B	0.004002	0.488581	-0.484579
+4	qwen7	  A	0.715000	0.511419	0.203581
+5	qwen7	  B	0.285000	0.488581	-0.203581
+
+The observed correlation between length difference and model choice is positive for LLaMA and Qwen, indicating a tendency to prefer longer 
+responses when they appear in the first position. However, for Mistral, the correlation is near zero, likely due to its near-deterministic
+ preference for the first response, which masks any potential length-based effects.
+
+generator_model
+llama8      0.285264
+mistral7   -0.040720
+qwen7       0.130901
+
+========================2nd template ============================
+
+n the Chatbot Arena setup, the models perform poorly, almost like random guessing. So, in the second version 
+of the prompt, we will try to explain the task more clearly and describe the steps the model should follow. 
+The idea is to guide the model to read both answers carefully and focus on some basic linguistic characteristics of the correct answer.
+
+New lines:
+- It is often useful to briefly consider each response on its own before comparing them.
+- Do not assume that the first response is better.
+
+Rusults,comments 
+
+Mystral: {"id": "687", "prediction": " A\n\n(B's order is the same as A's, so there's no difference
+ in the answers themselves, but the format is slightly different, and the rules prioritize clarity and 
+ structure. Therefore, a human judge would likely prefer A, as it follows the exact format requested in the prompt.)",
+  "ground_truth": "B", "finish_reason": "stop", "metadata": {"model_a": "claude-2.1", "model_b": "gpt-3.5-turbo-0613", 
+  "response_a_len": "78", "response_b_len": "68", "winner_model": "gpt-3.5-turbo-0613", "longer": "A", "prompt_len": 
+  "469", "pair": "('claude-2.1', 'gpt-3.5-turbo-0613')", "winner_A": "0", "length_diff": "10"}, "run_id": 0}
+
+  {"id": "440", "messages": [{"role": "system", "content": "You are an impartial evaluator.\n\nYou will be given:\n- 
+  A prompt (a user question or instruction)\n- Response A from a model\n- Response B from another model\n\nYour 
+  Task:\nDetermine which response a human judge would most likely prefer.\n\nEvaluation Rules:\n- Consider overall 
+  answer quality.\n- A preferred response is typically:\n  - More helpful\n  - More relevant to the prompt\n  
+  - Clearer and better structured\n  - More complete and informative\n- It is often useful to briefly consider 
+  each response on its own before comparing them.\n- Do not assume that the first response is better.
+  \n- Avoid being influenced only by response length.\n- Focus on which answer would provide a better experience 
+  for a human user.\n\nOutput Format:\nRespond with exactly one token:\n\nA\nor\nB\n\nImportant Rules:
+  \n- Output only A or B.\n- Do not include explanations.\n- Do not include any other text.\n- Do not justify 
+  your choice.\n- The output must contain exactly one character: A or B.\n"}, {"role": "user", "content": 
+  "Prompt:\n[\"Send an email to a colleage to request to come to office\"]\n\nResponse A:\n[\"Unfortunately 
+  I do not actually have access to email or ability to directly send emails. As an AI assistant without email 
+  capability, I can provide a template email you could send to a colleague requesting to come into the office:\\n\\nDear [colleague's name],\\n\\nI am writing to request your approval to come into the office on [date(s)]. The reason I would like to come in is to [state reasons, such as access files, meet with team members, use office resources, etc.]. \\n\\n[Optional: Provide additional background or rationale here to explain why physical office access is preferred\\/required for this task or meeting.]\\n\\nPlease let me know if you approve this request to work from the office on the proposed date(s). I'm happy to discuss further or adjust the date(s) if needed. \\n\\nThank you for considering,\\n[Your name]\\n\\nI'm happy to provide any clarification or adjust that template based on your specific situation and needs. Just let me know if you would like me to modify or add anything. Once finalized to your satisfaction, you should be able to copy and paste that request into an actual email to send to your colleague. Let me know if you have any other questions!\"]\n\nResponse B:\n[\"Subject: Request to Come to the Office for a Meeting\\n\\nDear [Colleague's Name],\\n\\nI hope this message finds you well. I am writing to inquire about the possibility of coming to the office for a meeting to discuss [specific topic or project]. I believe it would be more productive to have an in-person conversation to address the [project's\\/task's] objectives and progress.\\n\\nI am available on [mention specific dates and times that work for you]. Please let me know if any of these times work for you, or if you would prefer to find another date and time that fits better into your schedule.\\n\\nI understand that the current situation requires flexibility and that we may need to adjust our meeting plans accordingly. I am willing to accommodate any necessary precautions or guidelines to ensure a safe and productive meeting.\\n\\nLooking forward to your response and hoping to see you soon.\\n\\nThank you,\\n\\n[Your Name]\\n[Your Job Title]\\n[Your Contact Information]\"]"}], "ground_truth": "B", "metadata": {"model_a": "claude-2.1", "model_b": "yi-34b-chat", "response_a_len": "256", "response_b_len": "209", "winner_model": "yi-34b-chat", "longer": "A", "prompt_len": "480", "pair": "('claude-2.1', 'yi-34b-chat')", "winner_A": "0", "length_diff": "47"}}
+
+
+{"id": "440", "prediction": " A\n\n(Note: While Response B is also a good response, Response A provides a 
+more comprehensive template that can be used in a wider range of situations, including requests for office 
+access for individual work.)", "ground_truth": "B", "finish_reason": "stop", "metadata": {"model_a": "claude-2.1", 
+"model_b": "yi-34b-chat", "response_a_len": "256", "response_b_len": "209", "winner_model": "yi-34b-chat", 
+"longer": "A", "prompt_len": "480", "pair": "('claude-2.1', 'yi-34b-chat')", "winner_A": "0", "length_diff": "47"}, 
+"run_id": 0}
+
+
+{"id": "441", "messages": [{"role": "system", "content": "You are an impartial evaluator.\n\nYou will be given:
+\n- A prompt (a user question or instruction)\n- Response A from a model\n- Response B from another model\n\nYour 
+Task:\nDetermine which response a human judge would most likely prefer.\n\nEvaluation Rules:\n- Consider overall 
+answer quality.\n- A preferred response is typically:\n  - More helpful\n  - More relevant to the prompt\n  - 
+Clearer and better structured\n  - More complete and informative\n- It is often useful to briefly consider each 
+response on its own before comparing them.\n- Do not assume that the first response is better.\n- Avoid being 
+influenced only by response length.\n- Focus on which answer would provide a better experience for a human user.
+\n\nOutput Format:\nRespond with exactly one token:\n\nA\nor\nB\n\nImportant Rules:\n- Output only A or B.\n- 
+Do not include explanations.\n- Do not include any other text.\n- Do not justify your choice.\n- The output must 
+contain exactly one character: A or B.\n"}, {"role": "user", "content": "Prompt:\n[\"Sell me a iPhone in one line.\"]
+\n\nResponse A:\n[\"iPhone: The ultimate fusion of power, elegance, and innovation, designed to enhance your life with
+ every tap, swipe, and click.\"]\n\nResponse B:\n[\"Get the latest technology and sleek design with the iPhone, your 
+ ultimate companion for productivity and entertainment.\"]"}], "ground_truth": "B", "metadata": 
+ {"model_a": "gemini-pro", "model_b": "gpt-3.5-turbo-0613", "response_a_len": "28", "response_b_len": "20", 
+ "winner_model": "gpt-3.5-turbo-0613", "longer": "A", "prompt_len": "57", "pair": "('gemini-pro', 'gpt-3.5-turbo-0613')"
+ , "winner_A": "0", "length_diff": "8"}}
+
+{"id": "441", "prediction": " A\n\nResponse A provides a more poetic and evocative description of the iPhone, 
+which could potentially be more appealing to a human user looking for a persuasive sales pitch.", "ground_truth":
+ "B", "finish_reason": "stop", "metadata": {"model_a": "gemini-pro", "model_b": "gpt-3.5-turbo-0613", 
+ "response_a_len": "28", "response_b_len": "20", "winner_model": "gpt-3.5-turbo-0613", "longer": "A", 
+ "prompt_len": "57", "pair": "('gemini-pro', 'gpt-3.5-turbo-0613')", "winner_A": "0", "length_diff": "8"},
+  "run_id": 0}
+
+The task is tricky because human preference is not the same as correctness. Both answers can be valid, but one is
+ preferred based on style or clarity. So the model is not necessarily wrong — it just doesn’t always match what 
+ humans prefer.
+A good next step could be using a few-shot prompt with clear examples, especially including common errors (like 
+grammar or syntax), to better guide the model.
+
+
+llama8: 0.5770
+mistral7: 0.5070
+qwen7: 0.5690
+
+llama8 | acc: 0.5770 | f1: 0.5333 | recall: 0.5703
+mistral7 | acc: 0.5070 | f1: 0.3391 | recall: 0.4957
+qwen7 | acc: 0.5690 | f1: 0.5464 | recall: 0.5642
+
+
+
+========================3nd template ============================
+
+
+The next attempt will use a few-shot static approach, where we explain the task to the model 
+by providing two good examples.
+
+Goal:  
+(1) count prompt size -total size should be less than 2048 tokens-
+(2) find small enough, diverce  examples 
+(3) provide examples with explanation 
+    SO THE MODELS CAN FING THE PATERNS OF HP
+
+last template has 2 examples , thought steps , and when mention the output format is not A or B but B or A as well.
+
+
+llama8 | acc: 0.4890 | f1: 0.3319 | recall: 0.5004
+mistral7 | acc: 0.5135 | f1: 0.3447 | recall: 0.5026
+qwen7 | acc: 0.5800 | f1: 0.5535 | recall: 0.5751
+
+NO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -102,8 +102,8 @@ if __name__ == "__main__":
         """
         they dont belong here
         """
-        opt.num_runs= 3
-        opt.aggregation_method= "multirun"
+        opt.num_runs= 1
+        opt.aggregation_method= "oneshot_all"
         
         
         folder_path = cmd.split(maxsplit=1)[1] if len(cmd.split(maxsplit=1)) > 1 else opt.promptroot
@@ -155,8 +155,8 @@ if __name__ == "__main__":
 
       elif cmd.startswith("multirun"):  
         print("Good")
-        opt.num_runs= 3
-        opt.aggregation_method= "multirun"
+        opt.num_runs= 10
+        #opt.aggregation_method= "multirun"
 
         new_dataroot = cmd.split(maxsplit=1)[1] if len(cmd.split(maxsplit=1)) > 1 else opt.promptroot
         opt.promptroot = new_dataroot

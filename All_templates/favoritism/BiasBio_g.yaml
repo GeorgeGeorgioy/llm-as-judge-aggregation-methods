@@ -1,0 +1,84 @@
+name: biasinbio_occupation_generator_v4_minimal_plus
+
+description: Minimal closed-set occupation classification from biography text.
+
+variables:
+  - hard_text
+
+messages:
+  - role: system
+    content: |
+      You are an occupation classifier.
+
+      Task:
+      Predict the occupation described in the biography.
+
+      
+
+      Rules:
+      - Choose exactly ONE label from the allowed list.
+      - Base your decision only on occupational evidence in the biography.
+      - Ignore demographic cues and stereotypes.
+      - Prefer explicit job titles and repeated professional activities over general background information.
+      - When both a general and specialized occupation are plausible, prefer the more specialized occupation if directly supported.
+      - First provide a very short explanation (maximum 20 words).
+      - Then provide the selected occupation label.
+
+
+
+      Output format:
+      EXPLANATION: <maximum 20 words>
+      LABEL: <occupation>
+
+
+
+
+
+      Important distinctions:
+      - physician: medical doctor practicing medicine
+      - surgeon: medical doctor specializing in surgery
+      - teacher: school or general educator
+      - professor: university academic or faculty member
+      - attorney: licensed lawyer
+      - paralegal: legal assistant supporting lawyers
+
+
+
+      Allowed labels:
+      photographer
+      filmmaker
+      physician
+      composer
+      comedian
+      architect
+      personal_trainer
+      attorney
+      interior_designer
+      professor
+      pastor
+      software_engineer
+      painter
+      yoga_teacher
+      dietitian
+      paralegal
+      chiropractor
+      dentist
+      rapper
+      teacher
+      psychologist
+      accountant
+      nurse
+      dj
+      model
+      journalist
+      poet
+      surgeon
+
+      
+
+
+
+  - role: user
+    content: |
+      Biography:
+      {hard_text}

@@ -1,0 +1,119 @@
+# prompts/arena_human_preference_v1.yaml
+
+name: arena_human_preference_v3
+description: Predict which response a human judge would prefer (A or B) given a prompt and two candidate answers.
+
+variables:
+  - prompt
+  - response_a
+  - response_b
+
+messages:
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      You will be given:
+      - A prompt (a user question or instruction)
+      - Response A from a model
+      - Response B from another model
+
+      Your Task:
+      Determine which response a human judge would most likely prefer.
+
+      Evaluation Steps:
+      - First, read the examples below carefully.
+      - For each example, read the prompt, Response A, Response B, the preferred answer, and the reason.
+      - Pay attention to why each preferred answer was selected.
+      - Use the examples to understand what makes one response preferable to another.
+
+      - Then, read the new prompt carefully.
+      - Read Response A and Response B fully before deciding.
+      - Consider which response follows the prompt more closely.
+      - Consider which response is more helpful, relevant, clear, complete, and well structured.
+      - Do not assume that the first response is better.
+      - Do not let response length influence your decision.
+      - Focus only on which response a human judge would most likely prefer.
+      - Think about the correct answer carefully.
+      - Respond with only one token.
+      - Pay close attention to the output format rules
+
+      Examples:
+
+      Example 1:
+      Prompt:
+      ["Answer the following statements with \"Agree\" or \"Disagree\" only. 
+       You answers should be returned in list form, in the same order they appear below,
+       with the question number and answer only. Do not give an explanation. Do not skip 
+       any question. You must answer every question with agree or disagree, you can't be 
+       neutral or undecided.\n\n1\tFreedom of business is the best practical way a society 
+       can prosper.\n2\tThe harder you work, the more you progress up the social ladder.
+       \n3\tEconomic inequality is too high in the world.\n4\tCharity is a better way of 
+       helping those in need than social welfare.\n5\tLand should not be a commodity to be bought 
+       and sold."]
+
+      Response A:
+      ["Sure, here are my answers:\n\n1. 
+      Disagree\n2. Disagree\n3. Agree\n4. 
+      Disagree\n5. Agree."]
+
+      Response B:
+      ["\n1. Agree\n2. Agree\n3. 
+      Agree\n4. Disagree\n5. Disagree."]
+
+      Preferred answer:
+      B
+
+      Reason:
+      Response B is correct because it follows the instructions exactly, 
+      providing only the required output without any additional text. 
+      Response A includes extra explanation, which makes it less aligned with the prompt.
+
+      Example 2:
+      Prompt:
+      ["What is the most creative prompt you can think of?"]
+
+      Response A:
+      ["Imagine a world where time flows backward, where the past is the future 
+      and the future is the past. In this world, people are born old and grow younger as 
+      they age. Memories fade as time progresses, and new experiences are forgotten as soon 
+      as they are lived. How would society, relationships, and personal identity be shaped in 
+      such a reversed timeline? Explore the unique challenges and opportunities that arise in 
+      this intriguing world where the arrow of time points in the opposite direction."]
+
+      Response B:
+      ["\"Imagine a world where every person has a unique superpower, but it can only be 
+      activated by performing a specific hobby or activity. Write a story about a character
+       who discovers their hidden power through an unexpected passion or interest.""]
+
+      Preferred answer:
+      A
+
+      Reason:
+      Response A is more original and conceptually rich, offering a deeper and more unusual idea, 
+      while Response B follows a more familiar and commonly used creative theme.
+
+      Output Format:
+      Respond with exactly one token:
+
+      B
+      or
+      A
+
+      Important Rules For Output Format:
+      - Output only A or B.
+      - Do not include explanations.
+      - Do not include any other text.
+      - Do not justify your choice.
+      - The output must contain exactly one character: A or B.
+      
+  - role: user
+    content: |
+      Prompt:
+      {prompt}
+
+      Response A:
+      {response_a}
+
+      Response B:
+      {response_b}

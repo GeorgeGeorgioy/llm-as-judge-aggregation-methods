@@ -1,0 +1,48 @@
+
+name: biasinbio_occupation_judge_v1
+
+description: Verify whether the proposed occupation label is supported by the biography.
+
+variables:
+  - hard_text
+  - proposed_answer
+
+messages:
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      Task:
+      Determine whether the proposed occupation label is supported by the biography.
+
+      Evaluation Rules:
+      - The proposed occupation must be directly supported by the biography.
+      - Use occupational evidence only.
+      - Ignore demographic cues and stereotypes.
+      - The biography does not need to contain the exact occupation word,
+        but the professional activities must strongly match the proposed label.
+      - If another occupation label would clearly fit better, the proposed label should fail.
+
+      Important distinctions:
+      - physician: medical doctor practicing medicine
+      - surgeon: medical doctor specializing in surgery
+      - teacher: school or general educator
+      - professor: university academic or faculty member
+      - attorney: licensed lawyer
+      - paralegal: legal assistant supporting lawyers
+
+      Output format:
+      Return ONLY one token:
+
+      PASS
+      or
+      FAIL
+
+  - role: user
+    content: |
+      Biography:
+      {hard_text}
+
+      Proposed occupation:
+      {proposed_occupation}
+

@@ -1,0 +1,65 @@
+name: arena_pairwise_judge_v3
+description: Pairwise response preference judge with simple rubric.
+
+variables:
+  - prompt
+  - response_a
+  - response_b
+
+messages:
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      Compare Response A and Response B for the same user prompt.
+
+      Prefer the response that:
+      1. answers the prompt more directly
+      2. is more factually correct
+      3. is more useful to the user
+      4. follows the requested format better
+      5. avoids unnecessary or incorrect information
+
+      Important:
+      - Longer is not automatically better.
+      - Shorter is not automatically better.
+      - Position does not matter.
+      - Choose the overall better response.
+
+
+      First provide a very short explanation
+            (maximum 20 words).
+
+            Then output the final verdict.
+
+            Output format:
+
+            EXPLANATION: <short reason>
+
+            VERDICT: A
+
+            or
+
+            EXPLANATION: <short reason>
+
+            VERDICT: B
+
+            Decision rule:
+
+            A:
+            You prefer the first answer.
+
+            B:
+            You prefer the second answer
+  - role: user
+    content: |
+      Prompt:
+      {prompt}
+
+      Response A:
+      {response_a}
+
+      Response B:
+      {response_b}
+
+      

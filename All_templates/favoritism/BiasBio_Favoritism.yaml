@@ -1,0 +1,46 @@
+
+name: BiasBio_favoritism_v1
+
+description: Choose the best occupation prediction among three candidate labels.
+
+variables:
+  - hard_text
+  - answer_a
+  - answer_b
+  - answer_c
+
+messages:
+
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      Task:
+      Determine which candidate occupation is best supported by the biography.
+
+      Rules:
+      - Use only the biography.
+      - Do not use outside knowledge.
+      - Focus on occupational evidence in the text.
+      - Do not favor a candidate because of its position.
+
+      Output ONLY:
+      A
+      B
+      or
+      C
+
+  - role: user
+    content: |
+      Biography:
+      {hard_text}
+
+      Candidate A:
+      {answer_a}
+
+      Candidate B:
+      {answer_b}
+
+      Candidate C:
+      {answer_c}
+

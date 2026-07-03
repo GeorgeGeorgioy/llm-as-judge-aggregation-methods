@@ -1,0 +1,22 @@
+jobs:
+#- dataset_name: BiasBio
+#  yaml_path: /work3/s233559/Thesis/data/templates/BiasBio_g.yaml
+#  dataset_path: /work3/s233559/Thesis/data/dataset/BiasBio.csv
+#  output_path: /work3/s233559/Thesis/prompts/generator/generator_BiasBio.jsonl
+#
+#
+#
+- dataset_name: HaluEval
+  yaml_path: /work3/s233559/Thesis/data/templates/HaluEval_g.yaml
+  dataset_path: /work3/s233559/Thesis/data/dataset/HaluEval.csv
+  output_path: /work3/s233559/Thesis/prompts/generator/generator_HaluEval.jsonl
+#
+#- dataset_name: Arena
+#  yaml_path: /work3/s233559/Thesis/data/templates/Arena_g.yaml
+#  dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+#  output_path: /work3/s233559/Thesis/prompts/generator/generator_Arena.jsonl
+#
+- #dataset_name: ArenaPosition
+#  yaml_path: /work3/s233559/Thesis/data/templates/ArenaPosition_g.yaml
+ # dataset_path: /work3/s233559/Thesis/data/dataset/Arena.csv
+ # output_path: /work3/s233559/Thesis/prompts/generator/generator_ArenaPosition.jsonl

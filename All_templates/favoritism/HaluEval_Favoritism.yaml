@@ -1,0 +1,54 @@
+
+name: favoritism_eval_v1
+
+description: Choose the best answer among three candidate answers.
+
+variables:
+  - passage
+  - question
+  - answer_a
+  - answer_b
+  - answer_c
+
+messages:
+
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      You will be given:
+      - A passage
+      - A question
+      - Three candidate answers: A, B, and C
+
+      Task:
+      Choose the best answer.
+
+      Rules:
+      - Use only the passage.
+      - Do not use outside knowledge.
+      - Do not favor answers because of position.
+
+      Output ONLY one letter:
+      A
+      B
+      or
+      C
+
+  - role: user
+    content: |
+      Passage:
+      {passage}
+
+      Question:
+      {question}
+
+      Candidate A:
+      {answer_a}
+
+      Candidate B:
+      {answer_b}
+
+      Candidate C:
+      {answer_c}
+

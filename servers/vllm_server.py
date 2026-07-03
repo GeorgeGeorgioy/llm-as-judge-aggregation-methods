@@ -11,6 +11,7 @@ import sys
 import collections
 from pathlib import Path
 from datetime import datetime
+import requests
 
 
 class VLLMServerManager:
@@ -100,7 +101,7 @@ class VLLMServerManager:
         Needs more work for something better.
 
         """
-        timeout = 120
+        timeout = 900
         deadline = time.time() + timeout
 
         while time.time() < deadline:

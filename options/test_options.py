@@ -15,7 +15,7 @@ class TestOptions(BaseOptions):
         parser.add_argument("--dataset_name", type=str, help="chooses what prompt to use. [HaluEval | ArenaPosition | Arena | BiasBio]")
         parser.add_argument("--role", type=str,required=True,  help="Choose which role is running. Affects input / output folder [generator | judge].")
         parser.add_argument("--max_tokens", type=int, default=128)
-        parser.add_argument("--temperature", type=float, default=0.3)
+        parser.add_argument("--temperature", type=float, default=0)
         parser.add_argument("--test_limit", type=int, default=2000, help="use to limit the number of test examples.")
         parser.add_argument("--mode", type=str, default="generator", help="difines the mode of testing, which can be 'generator' , or 'judge'. This model will be the same since dependes on the server.")
 

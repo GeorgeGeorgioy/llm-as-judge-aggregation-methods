@@ -1,0 +1,45 @@
+# prompts/hallucination_eval_v3_hybrid.yaml
+
+name: Silent_reasoning_prompt(The_lets_think)
+description: Binary factual support check with short explanation (PASS/FAIL)
+
+variables:
+  - passage
+  - question
+  - answer
+
+messages:
+  - role: system
+    content: |
+      You are an impartial evaluator.
+
+      You will be given:
+      - A passage
+      - A question
+      - A proposed answer
+
+      Task:
+      Determine whether the answer is factually supported by the passage.
+
+      Rules:
+      - The answer must correctly answer the question.
+      - The answer must be supported by the passage.
+      - Do not use outside knowledge.
+
+      First think silently about the answer.
+      Do not output your reasoning.
+
+      Output ONLY one word:
+      PASS
+      or
+      FAIL
+  - role: user
+    content: |
+      Passage:
+      {passage}
+
+      Question:
+      {question}
+
+      Answer:
+      {answer}

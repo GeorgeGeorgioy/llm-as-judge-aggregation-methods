@@ -5,6 +5,9 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 import yaml
+import re
+import pandas as pd
+
 
 
 def load_prompt_yaml(yaml_path: Path) -> Dict[str, Any]:
@@ -88,57 +91,165 @@ def index_rows_by_id(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 
 ###### -- HELPER FUNCTIONS -- ######
 
-def clean_prediction(raw_prediction: Any) -> str:
-    """Keep only the first valid label from the generator prediction."""
-    fallback = "The generator did not provide a valid answer. Please give your own judgment."
+def normalize(x):
+    if pd.isna(x):
+        return ""
+    
+    x = str(x)
+    
+    # lower
+    x = x.lower()
+    # replace backslashes with space
+    x = x.replace("\\", " ")
+
+    
+    # strip leading/trailing spaces
+    x = x.strip()
+    
+    # remove newlines / tabs
+    x = re.sub(r"[\n\r\t]", " ", x)
+    
+    # collapse multiple spaces
+    x = re.sub(r"\s+", " ", x)
+    # convert spaces to underscore
+    x = x.replace(" ", "_")
+    # collapse multiple underscores into one
+    x = re.sub(r"_+", "_", x)
+    
+    # remove surrounding punctuation
+    x = x.strip(".,:;!?\"'()[]{}")
+    return x
+
+ALLOWED_OCCUPATIONS = [
+    "photographer",
+    "filmmaker",
+    "physician",
+    "composer",
+    "comedian",
+    "architect",
+    "personal_trainer",
+    "attorney",
+    "interior_designer",
+    "professor",
+    "pastor",
+    "software_engineer",
+    "painter",
+    "yoga_teacher",
+    "dietitian",
+    "paralegal",
+    "chiropractor",
+    "dentist",
+    "rapper",
+    "teacher",
+    "psychologist",
+    "accountant",
+    "nurse",
+    "dj",
+    "model",
+    "journalist",
+    "poet",
+    "surgeon",
+]
+
+ALLOWED_OCCUPATIONS_NORM = [normalize(x) for x in ALLOWED_OCCUPATIONS]
+
+def extract_valid_occupation(x):
+    if pd.isna(x):
+        return "invalid"
+    
+    x = normalize(x)
+
+    found = []
+
+    for occupation in ALLOWED_OCCUPATIONS_NORM:
+        pattern = rf"(?<![a-zA-Z0-9_]){re.escape(occupation)}(?![a-zA-Z0-9_])"
+
+        if re.search(pattern, x):
+            found.append(occupation)
+
+    if len(found) == 1:
+        return found[0]
+    
+    return "invalid"
+
+def normalize_arena(x: Any) -> str:
+    """
+    Normalize raw model output into A / B.
+    """
+
+    if x is None:
+        return "invalid"
+
+    text = str(x).strip().upper()
+
+    if not text:
+        return "invalid"
+
+    #  standalone A or B 
+    match = re.search(r"\b(A|B)\b", text)
+
+    if match:
+        return match.group(1)
+
+    return "invalid"
+
+
+
+
+def clean_prediction(dataset_name: str, raw_prediction: Any) -> str:
+    """Clean generator prediction based on dataset name."""
+    fallback = "invalid"
 
     if raw_prediction is None:
-        return fallback
+        cleaned = fallback
 
-    text = str(raw_prediction).strip()
-    if not text:
-        return fallback
+    else:
+        text = str(raw_prediction).strip()
 
-    first_word = text.split()[0].strip().upper()
+        if not text:
+            cleaned = fallback
 
-    allowed = {
-    "PASS", "FAIL", "A", "B", "PROPOSED_ANSWER", "ANSWER",
-    "PHOTOGRAPHER",
-    "FILMMAKER",
-    "PHYSICIAN",
-    "COMPOSER",
-    "COMEDIAN",
-    "ARCHITECT",
-    "PERSONAL_TRAINER",
-    "ATTORNEY",
-    "INTERIOR_DESIGNER",
-    "PROFESSOR",
-    "PASTOR",
-    "SOFTWARE_ENGINEER",
-    "PAINTER",
-    "YOGA_TEACHER",
-    "DIETITIAN",
-    "PARALEGAL",
-    "CHIROPRACTOR",
-    "DENTIST",
-    "RAPPER",
-    "TEACHER",
-    "PSYCHOLOGIST",
-    "ACCOUNTANT",
-    "NURSE",
-    "DJ",
-    "MODEL",
-    "JOURNALIST",
-    "POET",
-    "SURGEON"
-}
-    
+        else:
+            cleaned = fallback  # default
 
-    if first_word in allowed:
-        
-        return first_word
+            if dataset_name == "HaluEval":
+                normalized_text = text.lower()
 
-    return fallback    
+                match = re.search(
+                    r"\b(pass|passes|passed|passing|fail|fails|failed|failing)\b",
+                    normalized_text
+                )
+
+                if match:
+                    token = match.group(1)
+
+                    if token in ["pass", "passes", "passed", "passing"]:
+                        cleaned = "PASS"
+
+                    if token in ["fail", "fails", "failed", "failing"]:
+                        cleaned = "FAIL"
+
+            if dataset_name in {"Arena", "ArenaPosition"}:
+                normalized_text = text.upper()
+
+                match = re.search(r"\b(A|B)\b", normalized_text)
+
+                if match:
+                    cleaned = match.group(1)
+
+            # ---------------- BiasBio ----------------
+            if dataset_name == "BiasBio":
+                cleaned = extract_valid_occupation(raw_prediction)                
+
+
+
+    raw_for_log = str(raw_prediction).replace("\n", "\\n").replace("\r", "\\r")
+    with open("cleaning_log.txt", "a", encoding="utf-8") as f:
+        f.write(f"{dataset_name} | {raw_for_log} | {cleaned}\n")
+
+    return cleaned
+
+
 
 
 #### -- END OF HEALPER FUNCTIONS -- ####
@@ -147,13 +258,13 @@ def clean_prediction(raw_prediction: Any) -> str:
 
 def build_prompt_object(dataset_name, prompt_cfg, dataset_row, generator_row):
     if dataset_name == "HaluEval":
-        return build_prompt_halueval(prompt_cfg, dataset_row, generator_row)
+        return build_prompt_halueval(prompt_cfg, dataset_row, generator_row, dataset_name)
     elif dataset_name == "BiasBio":
-        return build_prompt_biasbio(prompt_cfg, dataset_row, generator_row)
+        return build_prompt_biasbio(prompt_cfg, dataset_row, generator_row, dataset_name)
     elif dataset_name == "Arena":
-        return build_prompt_arena(prompt_cfg, dataset_row, generator_row)
+        return build_prompt_arena(prompt_cfg, dataset_row, generator_row, dataset_name)
     elif dataset_name == "ArenaPosition":
-        return build_prompt_arenaposition(prompt_cfg, dataset_row, generator_row)    
+        return build_prompt_arenaposition(prompt_cfg, dataset_row, generator_row, dataset_name)    
     else:
         raise ValueError(f"Unknown dataset: {dataset_name}")
 
@@ -161,6 +272,7 @@ def build_prompt_biasbio(
     prompt_cfg: Dict[str, Any],
     dataset_row: Dict[str, str],
     generator_row: Dict[str, Any],
+    dataset_name: str,
 ) -> Dict[str, Any]:
     """Build one judge prompt object."""
 
@@ -174,7 +286,7 @@ def build_prompt_biasbio(
 
     #proposed_answer = generator_row["prediction"]
     raw_prediction = generator_row["prediction"]
-    proposed_answer = clean_prediction(raw_prediction)
+    proposed_answer = clean_prediction(dataset_name, raw_prediction)
 
     user_filled = user_template.format(
         hard_text=dataset_row["hard_text"],
@@ -200,6 +312,7 @@ def  build_prompt_arenaposition(
     prompt_cfg: Dict[str, Any],
     dataset_row: Dict[str, str],
     generator_row: Dict[str, Any],
+    dataset_name: str,
 ) -> Dict[str, Any]:
     """ArenaPosition.csv is the same as Arena.csv 
        I swap only the responses
@@ -215,7 +328,7 @@ def  build_prompt_arenaposition(
 
     #proposed_answer = generator_row["prediction"]
     raw_prediction = generator_row["prediction"]
-    proposed_answer = clean_prediction(raw_prediction)
+    proposed_answer = clean_prediction(dataset_name, raw_prediction)
     """ArenaPosition.csv is the same as Arena.csv """
 
     user_filled = user_template.format(
@@ -255,6 +368,7 @@ def  build_prompt_arena(
     prompt_cfg: Dict[str, Any],
     dataset_row: Dict[str, str],
     generator_row: Dict[str, Any],
+    dataset_name: str,
 ) -> Dict[str, Any]:
     """Build one judge prompt object."""
 
@@ -268,7 +382,7 @@ def  build_prompt_arena(
 
     #proposed_answer = generator_row["prediction"]
     raw_prediction = generator_row["prediction"]
-    proposed_answer = clean_prediction(raw_prediction)
+    proposed_answer = clean_prediction(dataset_name, raw_prediction)
 
     user_filled = user_template.format(
         prompt=dataset_row["prompt"],
@@ -308,6 +422,7 @@ def build_prompt_halueval(
     prompt_cfg: Dict[str, Any],
     dataset_row: Dict[str, str],
     generator_row: Dict[str, Any],
+    dataset_name: str,
 ) -> Dict[str, Any]:
     """Build one judge prompt object."""
 
@@ -321,7 +436,7 @@ def build_prompt_halueval(
 
     #proposed_answer = generator_row["prediction"]
     raw_prediction = generator_row["prediction"]
-    proposed_answer = clean_prediction(raw_prediction)
+    proposed_answer = clean_prediction(dataset_name, raw_prediction)
 
     #---------- delete here ----------
 
@@ -381,6 +496,10 @@ def build_and_save_jsonl(
 
 
 if __name__ == "__main__":
+    
+    with open("cleaning_log.txt", "w", encoding="utf-8") as f:
+     f.write("DATASET | RAW PREDICTION | CLEANED PREDICTION\n")
+     f.write("-" * 60 + "\n")
 
 
 
